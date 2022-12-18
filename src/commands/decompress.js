@@ -8,30 +8,55 @@ import {
 } from 'path';
 import { createBrotliDecompress } from 'node:zlib';
 import { pipeline } from 'stream';
-import { showCurrentDir } from "../helpers/index.js";
-import { OPERATION_FAILED_ERR } from "../constants.js";
-import { createReadStream, createWriteStream } from 'node:fs';
+import {
+    showCurrentDir,
+    getPath,
+    removeQuotes
+} from "../helpers/index.js";
+import { OPERATION_FAILED_ERR, INVALID_INPUT } from "../constants.js";
+import {
+    createReadStream,
+    createWriteStream,
+    stat,
+    access
+} from 'node:fs';
 const { cwd } = process;
 
-// todo: add error handling
 export const decompress = async (args) => {
     const paths = args.split(' ');
     const fileName = parse(basename(paths[0])).name;
 
-    const pathToFile =
-        isAbsolute(paths[0]) ? paths[0] : resolve(cwd(), paths[0]);
+    const pathToFile = getPath(paths[0]);
+
+    await stat(pathToFile, (err, stats) => {
+        if(err || !stats?.isFile()) {
+            console.log(INVALID_INPUT);
+        }
+    });
+
+    const pathToDirectoryFormatted = removeQuotes(paths[1]);
+
+    await access(pathToDirectoryFormatted, (err) => {
+        if(err) {
+            console.log(INVALID_INPUT);
+        }
+    });
 
     const pathToDirectory =
-        isAbsolute(paths[1])
-            ? join(paths[1], fileName)
-            : resolve(cwd(), resolve(paths[1], fileName));
+        isAbsolute(pathToDirectoryFormatted)
+            ? join(pathToDirectoryFormatted, fileName)
+            : resolve(cwd(), resolve(pathToDirectoryFormatted, fileName));
 
     const readStream = createReadStream(pathToFile);
     const brotliDecompressStream = createBrotliDecompress();
     const writeStream = createWriteStream(pathToDirectory);
 
-    readStream.on('error', (err) => console.log(OPERATION_FAILED_ERR));
-    writeStream.on('error', (err) => console.log(OPERATION_FAILED_ERR));
+    readStream.on('error', (err) => {
+        // console.log(OPERATION_FAILED_ERR)
+    });
+    writeStream.on('error', (err) => {
+        // console.log(OPERATION_FAILED_ERR)
+    });
     writeStream.on('finish',() => showCurrentDir());
 
     pipeline(

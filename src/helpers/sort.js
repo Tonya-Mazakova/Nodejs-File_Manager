@@ -1,10 +1,13 @@
-// todo: re-check
 export const sortByName = (prev, next) => {
     if (next.Name > prev.Name) {
         return -1;
     }
 
-    return 1;
+    if (next.Name < prev.Name){
+        return 1;
+    }
+
+    return 0;
 };
 
 export const sortByType = (prev, next) => {

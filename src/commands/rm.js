@@ -1,7 +1,21 @@
-import { rm as remove } from 'node:fs';
-import { showCurrentDir } from "../helpers/index.js";
+import { rm as remove, stat } from 'node:fs';
+import { showCurrentDir, removeQuotes } from "../helpers/index.js";
+import { INVALID_INPUT, OPERATION_FAILED_ERR } from "../constants.js";
 
 export const rm = async (path) => {
-    await remove(path, (err) => { if (err) console.error(err) });
-    showCurrentDir();
+    const pathToFile = removeQuotes(path);
+
+    await stat(pathToFile, (err, stats) => {
+        if(err || !stats.isFile()) {
+            console.log(INVALID_INPUT);
+        }
+    });
+
+    await remove(pathToFile, (err) => {
+        if (err) {
+            return console.error(OPERATION_FAILED_ERR);
+        }
+
+        showCurrentDir();
+    });
 };

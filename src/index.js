@@ -3,6 +3,8 @@ import { homedir } from 'os';
 import { createInterface } from 'node:readline';
 import { runCommand } from './commands/runCommand.js';
 import { showCurrentDir, getUserName } from "./helpers/index.js";
+import { INVALID_INPUT } from "./constants.js";
+
 const {
     stdin,
     stdout,
@@ -22,7 +24,6 @@ const readline = createInterface({
     prompt: '> '
 });
 
-// todo: handle error commands
 readline.on('line', async (command) => {
     // todo: remove empty strings in arr
     const cmd = command.split(' ');
@@ -33,7 +34,7 @@ readline.on('line', async (command) => {
         await runCommand(operation, args);
 
     } catch(e) {
-        console.error("Invalid input");
+        console.error(INVALID_INPUT);
     }
 });
 
@@ -42,5 +43,5 @@ process.on('SIGINT', () => {
 });
 
 process.on('exit', () => {
-    process.stdout.write(`Thank you for using File Manager, ${userName}, goodbye!\n`);
+    process.stdout.write(`Thank you for using File Manager, ${userName || 'Anonymous'}, goodbye!\n`);
 });
