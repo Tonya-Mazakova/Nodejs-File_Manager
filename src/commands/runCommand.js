@@ -14,9 +14,9 @@ import { decompress } from "./decompress.js";
 
 export const COMMANDS = {
     '.exit': () => process.exit(),
-    up: async () => await up(),
+    up: async (args) => await up(args),
     cd: async (path) => await cd(path),
-    ls: async () => await ls(),
+    ls: async (args) => await ls(args),
     cat: async (path) => await cat(path),
     add: async (fileName) => await add(fileName),
     rn: async (args) => await rn(args),

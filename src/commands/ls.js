@@ -5,10 +5,14 @@ import {
     sortByType,
     showCurrentDir
 } from "../helpers/index.js";
-import { OPERATION_FAILED_ERR } from "../constants.js";
+import { OPERATION_FAILED_ERR, INVALID_INPUT } from "../constants.js";
 const { cwd } = process;
 
-export const ls = async () => {
+export const ls = async (args) => {
+    if (args) {
+        return console.error(INVALID_INPUT);
+    }
+
     await readdir(cwd(), { withFileTypes: true }, (err, files) => {
         if (err) {
             return console.log(OPERATION_FAILED_ERR);

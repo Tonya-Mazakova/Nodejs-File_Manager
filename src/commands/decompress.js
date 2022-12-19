@@ -25,7 +25,6 @@ const { cwd } = process;
 export const decompress = async (args) => {
     const paths = args.split(' ');
     const fileName = parse(basename(paths[0])).name;
-
     const pathToFile = getPath(paths[0]);
 
     await stat(pathToFile, (err, stats) => {

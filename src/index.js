@@ -3,7 +3,11 @@ import { homedir } from 'os';
 import { createInterface } from 'node:readline';
 import { runCommand } from './commands/runCommand.js';
 import { showCurrentDir, getUserName } from "./helpers/index.js";
-import { INVALID_INPUT } from "./constants.js";
+import {
+    INVALID_INPUT,
+    getWelcomeMSG,
+    getGoodbyeMSG
+} from "./constants.js";
 
 const {
     stdin,
@@ -14,7 +18,7 @@ const {
 
 const userName = getUserName();
 
-process.stdout.write(`Welcome to the File Manager, ${userName || 'Anonymous'}!\n`);
+process.stdout.write(getWelcomeMSG(userName));
 chdir(homedir());
 showCurrentDir(homedir());
 
@@ -43,5 +47,5 @@ process.on('SIGINT', () => {
 });
 
 process.on('exit', () => {
-    process.stdout.write(`Thank you for using File Manager, ${userName || 'Anonymous'}, goodbye!\n`);
+    process.stdout.write(getGoodbyeMSG(userName));
 });

@@ -23,7 +23,7 @@ const { cwd } = process;
 
 export const compress = async (args) => {
     const paths = args.split(' ');
-    const fileName = basename(paths[0]);
+    const fileName = removeQuotes(basename(paths[0]));
     const fileNameDestExt = basename(paths[1]) && extname(basename(paths[1]));
     const fileNameDest = fileNameDestExt ? '' : `${fileName}.br`;
 
